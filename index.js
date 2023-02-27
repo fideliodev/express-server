@@ -1,8 +1,10 @@
 const express = require('express')
+const path = require('path')
+const fs = require('fs')
 const app = express()
 app.set('view engine', 'ejs')
 //caminhos de pasta
-const path = require('path')
+
 
 
 //rotas
@@ -30,6 +32,8 @@ const expressPublic = express.static(publicFolder)
 app.use(expressPublic)
 
 
+//habilita o sv receber dados de um form
+app.use(express.urlencoded({extends: true}))
 
 
 //views
@@ -44,10 +48,56 @@ app.get('/', (request, response) => {
 app.get('/post', (request, response) => {
     //renderizar o html
     response.render('posts', {
-        title: 'post'
+        title: 'post',
+        posts: [{
+            title: 'Novidade por agora',
+            text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi ipsam veniam nam, necessitatibus quas voluptatum fuga aliquam error aperiam autem. Fugit sapiente assumenda, id at eveniet deleniti? Dolor, eveniet provident.',
+            stars: 3
+        },
+    
+        {
+            title: '10 dicas para programação',
+            text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi ipsam veniam nam, necessitatibus quas voluptatum fuga aliquam error aperiam autem. Fugit sapiente assumenda, id at eveniet deleniti? Dolor, eveniet provident.',
+        },
+
+        {
+            title: 'Javascript?!',
+            text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi ipsam veniam nam, necessitatibus quas voluptatum fuga aliquam error aperiam autem. Fugit sapiente assumenda, id at eveniet deleniti? Dolor, eveniet provident.',
+            stars: 2
+        },
+
+    ]
 
     })
 } )
+
+app.get('/cadastro', (request, response) => {
+    const {c} = request.query
+    //renderizar o html
+    response.render('cadastro', {
+        //olha o head.js!
+        title: 'cadastrar-se',
+        cadastrado: c,
+    })
+} )
+
+app.post('/salvar-post', (request, response) => {
+   
+    //campo dos form
+    const{titulo, texto} = request.body
+const data = fs.readFileSync('./store/posts.json')
+const posts = JSON.parse(data)
+
+posts.push({
+    titulo,
+    texto,
+})
+
+const postsString = JSON.stringify(posts)
+fs.writeFileSync('./store/posts.json', postsString)
+    response.redirect('/cadastro?c=1')
+} )
+
 
 app.get('/sobre', (request, response) => {
     response.send('Teste rota sobre')

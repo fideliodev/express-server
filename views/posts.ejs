@@ -7,6 +7,22 @@
 <body>
     <%- include('partials/header.ejs') %>
     <h1>Posts </h1>
+    <div class="posts">
+        <% posts.forEach((item) => {%>
+            <div class="post">
+                <h3><%= item.title %></h3>
+                <p><%= item.text %></p>
+
+                <% if(item.stars) { %>
+                    <% for( let index = 0; index < item.stars; index++){ %>
+                        <p>⭐</p>    
+                       
+                <%} %>
+                <%} %> 
+            </div>
+     <%}) %>
+    </div>
+   
     <p>gg</p>
     <%- include('partials/footer.ejs') %>
     <%- include('partials/foot.ejs') %>
